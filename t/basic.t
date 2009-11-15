@@ -10,19 +10,18 @@ use Test::TableDriven (
     role    => { 1 => 'main', 2 => 'Foo', 4 => 'main' },
 );
 
-my %data = %{eval do { local $/; <DATA> }};
+my %data = (
+    trivial => '1;',
+    foo     => "package Foo;\n1;",
+    bar     => "package Foo;\n1;\npackage Bar;\n1;",
+    nested  => "{\n package Foo;\n 1;\n}\n2;\n",
+    class   => "class Foo {\n <foo>\n}\n1;",
+    role    => "role Foo with Baz {\n <foo>\n}\n1;",
+);
+
 for my $func (keys %data){
     no strict 'refs';
     *{$func} = sub { my $line = shift; in_package( code => $data{$func}, line => $line ) };
 }
 
 runtests;
-
-__DATA__
-{ trivial => '1;',
-  foo     => "package Foo;\n1;",
-  bar     => "package Foo;\n1;\npackage Bar;\n1;",
-  nested  => "{\n package Foo;\n 1;\n}\n2;\n",
-  class   => "class Foo {\n <foo>\n}\n1;",
-  role    => "role Foo with Baz {\n <foo>\n}\n1;",
-};
