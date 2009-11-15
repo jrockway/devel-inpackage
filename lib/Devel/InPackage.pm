@@ -11,7 +11,7 @@ use Sub::Exporter -setup => {
     exports => ['in_package'],
 };
 
-my $MODULE = qr/(?<package>[A-Za-z0-9]+)/;
+my $MODULE = qr/(?<package>[A-Za-z0-9:]+)/;
 
 sub in_package {
     my %args = @_;
@@ -39,8 +39,8 @@ sub in_package {
         while( $line =~ /(?<token>(?:
                                  { |
                                  } |
-                                 package \s+ $MODULE |
-                                 (?:class|role) \s+ $MODULE (.+)? { ))
+                                 \bpackage \s+ $MODULE \s* ; |
+                                 \b(?:class|role) \s+ $MODULE (.+)? { ))
                         /xg ){
             given($+{token}){
                 when('{'){
