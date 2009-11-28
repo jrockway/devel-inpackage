@@ -3,13 +3,13 @@ use warnings;
 use Devel::InPackage qw(in_package);
 use Test::TableDriven (
     trivial     => { 1 => 'main' },
-    foo         => { 1 => 'main', 2 => 'Foo' },
-    bar         => { 1 => 'main', 2 => 'Foo', 4 => 'Bar' },
-    nested      => { 1 => 'main', 3 => 'Foo', 5 => 'main' },
-    class       => { 1 => 'main', 2 => 'Foo', 4 => 'main' },
-    role        => { 1 => 'main', 2 => 'Foo', 4 => 'main' },
-    pre_comment => { 1 => 'main', 2 => 'A', 3 => 'B', 4 => 'B' },
-    comment     => { 1 => 'main', 2 => 'A', 3 => 'A', 4 => 'A' },
+    foo         => { 1 => 'Foo', 2 => 'Foo' },
+    bar         => { 1 => 'Foo', 2 => 'Foo', 4 => 'Bar' },
+    nested      => { 1 => 'main', 2 => 'Foo', 3 => 'Foo', 4 => 'main', 5 => 'main' },
+    class       => { 1 => 'Foo', 2 => 'Foo', 4 => 'main' },
+    role        => { 1 => 'Foo', 2 => 'Foo', 4 => 'main' },
+    pre_comment => { 1 => 'A', 2 => 'B', 3 => 'B' },
+    comment     => { 1 => 'A', 2 => 'A', 3 => 'A' },
 );
 
 my %data = (

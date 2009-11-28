@@ -8,23 +8,43 @@ use Carp qw(confess);
 use File::Slurp qw(read_file);
 
 use Sub::Exporter -setup => {
-    exports => ['in_package'],
+    exports => ['in_package', 'scan'],
 };
 
 my $MODULE = qr/(?<package>[A-Za-z0-9:]+)/;
 
 sub in_package {
     my %args = @_;
+    # XXX: hope you don't want to know what package foo is in here:
+    # package main;
+    # { package Bar; <foo> }
+    my $point = delete $args{line} || confess 'need line';
+
+    my $result = 'main';
+    my $line_number = 0;
+    my $cb = sub {
+        my ($line, $package, %info) = @_;
+        $line_number++;
+        if( $line_number >= $point ){
+            $result = $package;
+            return 0;
+        }
+        return 1;
+    };
+
+    scan( %args, callback => $cb);
+
+    return $result;
+}
+
+sub scan {
+    my %args = @_;
 
     my $program = $args{code} //
       ($args{file} && read_file($args{file})) //
         confess 'Need "file" or "code"';
 
-    # XXX: hope you don't want to know what package foo is in here:
-    # package main;
-    # { package Bar; <foo> }
-    my $point = $args{line} || confess 'need line';
-
+    my $callback = $args{callback} // confess 'Need "callback"';
 
     # this is very crude, and makes incorrect assumptions about Perl
     # syntax
@@ -32,9 +52,7 @@ sub in_package {
     my $line_no = 0;
     while( $program =~ /^(?<line>.+)$/mg ){
         my $line = $+{line};
-        $line_no++;
-
-        return $state[-1] if $line_no eq $point;
+        my $saved_line = $line;
 
         # skip comments
         $line =~ s/#(.+)$//;
@@ -58,9 +76,12 @@ sub in_package {
                 }
             }
         }
+
+        my $res = $callback->( $line, $state[-1], line_number => $line_no++ );
+        return if !$res; # end early
     }
 
-    return $state[-1];
+    return;
 }
 
 1;
