@@ -36,6 +36,9 @@ sub in_package {
 
         return $state[-1] if $line_no eq $point;
 
+        # skip comments
+        $line =~ s/#(.+)$//;
+
         while( $line =~ /(?<token>(?:
                                  { |
                                  } |
