@@ -21,10 +21,9 @@ sub in_package {
     my $point = delete $args{line} || confess 'need line';
 
     my $result = 'main';
-    my $line_number = 0;
     my $cb = sub {
         my ($line, $package, %info) = @_;
-        $line_number++;
+        my $line_number = $info{line_number};
         if( $line_number >= $point ){
             $result = $package;
             return 0;
@@ -77,7 +76,7 @@ sub scan {
             }
         }
 
-        my $res = $callback->( $line, $state[-1], line_number => $line_no++ );
+        my $res = $callback->( $line, $state[-1], line_number => ++$line_no );
         return if !$res; # end early
     }
 
