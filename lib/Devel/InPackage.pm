@@ -76,8 +76,8 @@ sub scan {
             }
         }
 
-        my $res = $callback->( $line, $state[-1], line_number => ++$line_no );
-        return if !$res; # end early
+        my $continue_scanning = $callback->( $line, $state[-1], line_number => ++$line_no );
+        return if !$continue_scanning; # end early
     }
 
     return;
