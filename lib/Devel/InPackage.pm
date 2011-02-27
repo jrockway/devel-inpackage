@@ -1,15 +1,16 @@
 package Devel::InPackage;
+# ABSTRACT: scan a file for package declarations or determine which package a line belongs to
 use strict;
 use warnings;
 use 5.010;
 
 use Carp qw(confess);
-
 use File::Slurp qw(read_file);
-
 use Sub::Exporter -setup => {
     exports => ['in_package', 'scan'],
 };
+
+our $VERSION;
 
 my $MODULE = qr/(?<package>[A-Za-z0-9:]+)/;
 
